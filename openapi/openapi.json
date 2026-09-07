@@ -1,0 +1,806 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "IT Navigator Policy Engine",
+    "description": "Deterministic policy engine and context services for IBM watsonx Orchestrate",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Check",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resolve-pathway": {
+      "post": {
+        "tags": [
+          "Policy Engine"
+        ],
+        "summary": "Deterministic pathway selection (Resolve / Request / Escalate / Clarify) \u2014 Section 7.1",
+        "operationId": "resolve_pathway",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContextRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PathwayDecision"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evaluate-priority": {
+      "post": {
+        "tags": [
+          "Policy Engine"
+        ],
+        "summary": "Deterministic priority + SLA from business criticality, users affected, urgency \u2014 Section 7.2",
+        "operationId": "evaluate_priority",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContextRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityDecision"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evaluate-major-incident": {
+      "post": {
+        "tags": [
+          "Policy Engine"
+        ],
+        "summary": "Deterministic major-incident candidacy flag \u2014 Section 7.3",
+        "operationId": "evaluate_major_incident",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContextRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MajorIncidentDecision"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evaluate-eligibility-approval": {
+      "post": {
+        "tags": [
+          "Policy Engine"
+        ],
+        "summary": "Deterministic access eligibility and approval routing \u2014 Section 7.4",
+        "operationId": "evaluate_eligibility_and_approval",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EligibilityRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EligibilityDecision"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classify-security": {
+      "post": {
+        "tags": [
+          "Security Classifier"
+        ],
+        "summary": "Semantic and pattern security risk detector \u2014 Section 5.4",
+        "operationId": "classify_security_risk",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RawTextRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecuritySignal"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get-context": {
+      "post": {
+        "tags": [
+          "Context Layer"
+        ],
+        "summary": "Unified Situation Object assembler \u2014 Section 6",
+        "operationId": "get_context",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RawTextRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SituationContext"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ContextRequest": {
+        "properties": {
+          "context": {
+            "$ref": "#/components/schemas/SituationContext"
+          }
+        },
+        "type": "object",
+        "required": [
+          "context"
+        ],
+        "title": "ContextRequest"
+      },
+      "EligibilityDecision": {
+        "properties": {
+          "is_eligible": {
+            "type": "boolean",
+            "title": "Is Eligible",
+            "description": "Whether user role qualifies for requested item"
+          },
+          "approval_required": {
+            "type": "boolean",
+            "title": "Approval Required",
+            "description": "Whether approval is required before provisioning"
+          },
+          "approver_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approver Role",
+            "description": "Role of the required approver (e.g. Line manager, IT Security)"
+          },
+          "is_privileged": {
+            "type": "boolean",
+            "title": "Is Privileged",
+            "description": "Whether the entitlement confers elevated or privileged access",
+            "default": false
+          },
+          "reasoning_code": {
+            "type": "string",
+            "title": "Reasoning Code",
+            "description": "Eligibility and approval rule code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "is_eligible",
+          "approval_required",
+          "reasoning_code"
+        ],
+        "title": "EligibilityDecision"
+      },
+      "EligibilityRequest": {
+        "properties": {
+          "context": {
+            "$ref": "#/components/schemas/SituationContext"
+          },
+          "requested_item": {
+            "type": "string",
+            "title": "Requested Item",
+            "description": "Specific catalog item name",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "context"
+        ],
+        "title": "EligibilityRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "IssueContext": {
+        "properties": {
+          "raw_text": {
+            "type": "string",
+            "title": "Raw Text",
+            "description": "Original problem statement from the employee"
+          },
+          "detected_intent": {
+            "type": "string",
+            "title": "Detected Intent",
+            "description": "Extracted intent code",
+            "default": "general_inquiry"
+          },
+          "affected_service": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Affected Service",
+            "description": "Affected application or system"
+          },
+          "stated_urgency": {
+            "type": "string",
+            "title": "Stated Urgency",
+            "description": "User stated urgency: low, medium, high, critical",
+            "default": "medium"
+          },
+          "time_sensitivity_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Sensitivity Minutes",
+            "description": "Reported deadline in minutes"
+          },
+          "prior_resolve_attempted": {
+            "type": "boolean",
+            "title": "Prior Resolve Attempted",
+            "description": "Whether a self-service fix was already attempted and failed",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "raw_text"
+        ],
+        "title": "IssueContext"
+      },
+      "MajorIncidentDecision": {
+        "properties": {
+          "major_incident_candidate": {
+            "type": "boolean",
+            "title": "Major Incident Candidate",
+            "description": "Whether this situation qualifies as a candidate for Major Incident declaration"
+          },
+          "reasoning_code": {
+            "type": "string",
+            "title": "Reasoning Code",
+            "description": "Rule code triggering major incident candidacy"
+          },
+          "requires_human_signoff": {
+            "type": "boolean",
+            "title": "Requires Human Signoff",
+            "description": "Always True; major incidents never auto-declare",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "major_incident_candidate",
+          "reasoning_code"
+        ],
+        "title": "MajorIncidentDecision"
+      },
+      "PathwayDecision": {
+        "properties": {
+          "recommended_pathway": {
+            "type": "string",
+            "enum": [
+              "resolve",
+              "request",
+              "escalate",
+              "clarify"
+            ],
+            "title": "Recommended Pathway",
+            "description": "Deterministic pathway recommendation"
+          },
+          "reasoning_code": {
+            "type": "string",
+            "title": "Reasoning Code",
+            "description": "Deterministic rule audit code"
+          },
+          "missing_signal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Missing Signal",
+            "description": "Populated only when recommended_pathway=clarify"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recommended_pathway",
+          "reasoning_code"
+        ],
+        "title": "PathwayDecision"
+      },
+      "PolicyContext": {
+        "properties": {
+          "user_access_level": {
+            "type": "string",
+            "title": "User Access Level",
+            "description": "standard, elevated, privileged, admin",
+            "default": "standard"
+          },
+          "existing_entitlements": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Existing Entitlements",
+            "description": "List of currently assigned entitlements"
+          },
+          "requires_privileged_flag": {
+            "type": "boolean",
+            "title": "Requires Privileged Flag",
+            "description": "Flag indicating if the action requires privileged access",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "PolicyContext"
+      },
+      "PriorityDecision": {
+        "properties": {
+          "priority": {
+            "type": "string",
+            "enum": [
+              "P1",
+              "P2",
+              "P3",
+              "P4"
+            ],
+            "title": "Priority",
+            "description": "Computed incident priority"
+          },
+          "response_sla_hours": {
+            "type": "number",
+            "title": "Response Sla Hours",
+            "description": "Target response SLA in hours"
+          },
+          "resolution_sla_hours": {
+            "type": "number",
+            "title": "Resolution Sla Hours",
+            "description": "Target resolution SLA in hours"
+          },
+          "reasoning_code": {
+            "type": "string",
+            "title": "Reasoning Code",
+            "description": "Deterministic matrix lookup code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "priority",
+          "response_sla_hours",
+          "resolution_sla_hours",
+          "reasoning_code"
+        ],
+        "title": "PriorityDecision"
+      },
+      "RawTextRequest": {
+        "properties": {
+          "raw_text": {
+            "type": "string",
+            "title": "Raw Text",
+            "description": "Problem description or employee message"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Employee user ID",
+            "default": "u12345"
+          },
+          "override_service": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Override Service"
+          },
+          "override_urgency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Override Urgency"
+          },
+          "prior_resolve_attempted": {
+            "type": "boolean",
+            "title": "Prior Resolve Attempted",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "raw_text"
+        ],
+        "title": "RawTextRequest"
+      },
+      "SecuritySignal": {
+        "properties": {
+          "flag": {
+            "type": "boolean",
+            "title": "Flag",
+            "description": "True if security risk or incident detected",
+            "default": false
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence",
+            "description": "Confidence score between 0.0 and 1.0",
+            "default": 0.0
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "Security category: data_leak, unauthorized_access, account_takeover, phishing, etc."
+          }
+        },
+        "type": "object",
+        "title": "SecuritySignal"
+      },
+      "ServiceContext": {
+        "properties": {
+          "business_criticality": {
+            "type": "string",
+            "title": "Business Criticality",
+            "description": "Criticality tier: Tier 1, Tier 2, Tier 3",
+            "default": "Tier 3"
+          },
+          "current_health_status": {
+            "type": "string",
+            "title": "Current Health Status",
+            "description": "Status: healthy, degraded, down",
+            "default": "healthy"
+          },
+          "known_open_incidents": {
+            "type": "integer",
+            "title": "Known Open Incidents",
+            "description": "Active open incident count in ITSM",
+            "default": 0
+          },
+          "similar_reports_last_hour": {
+            "type": "integer",
+            "title": "Similar Reports Last Hour",
+            "description": "Cluster of similar reports last 60 minutes",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "ServiceContext"
+      },
+      "SituationContext": {
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserContext"
+          },
+          "issue": {
+            "$ref": "#/components/schemas/IssueContext"
+          },
+          "service_context": {
+            "$ref": "#/components/schemas/ServiceContext"
+          },
+          "policy_context": {
+            "$ref": "#/components/schemas/PolicyContext"
+          },
+          "security_signal": {
+            "$ref": "#/components/schemas/SecuritySignal"
+          },
+          "kb_match_confidence": {
+            "type": "number",
+            "title": "Kb Match Confidence",
+            "description": "Confidence of candidate KB article (0.0 to 1.0)",
+            "default": 0.0
+          },
+          "kb_match_is_safe": {
+            "type": "boolean",
+            "title": "Kb Match Is Safe",
+            "description": "True if KB candidate fix is classified safe",
+            "default": false
+          },
+          "kb_match_article_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kb Match Article Id",
+            "description": "Candidate KB article ID"
+          }
+        },
+        "type": "object",
+        "required": [
+          "issue"
+        ],
+        "title": "SituationContext"
+      },
+      "UserContext": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique user identifier",
+            "default": "u00000"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "User full name",
+            "default": "Employee"
+          },
+          "department": {
+            "type": "string",
+            "title": "Department",
+            "description": "Department name",
+            "default": "General"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "description": "User business role",
+            "default": "Employee"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location",
+            "description": "Office location or remote region"
+          },
+          "manager_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manager Id",
+            "description": "Manager ID for approval routing"
+          }
+        },
+        "type": "object",
+        "title": "UserContext"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
