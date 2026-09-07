@@ -129,6 +129,12 @@ class WatsonOrchestrateClient:
             f"/v1/orchestrate/agents/{agent_id}", method="PUT", data=payload
         )
 
+    def patch_agent(self, agent_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Patch an existing agent (partial update)."""
+        return self._request(
+            f"/v1/orchestrate/agents/{agent_id}", method="PATCH", data=payload
+        )
+
     def delete_agent(self, agent_id: str) -> Any:
         """Delete an agent by ID."""
         return self._request(f"/v1/orchestrate/agents/{agent_id}", method="DELETE")
