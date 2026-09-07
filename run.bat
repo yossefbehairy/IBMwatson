@@ -66,10 +66,7 @@ goto MENU
 
 :INTERACTIVE
 echo.
-set /p custom_query="Enter employee problem description: "
-echo.
-%PYTHON_EXE% src/orchestrator/runner.py --query "%custom_query%"
-echo.
+%PYTHON_EXE% src/orchestrator/runner.py --chat
 pause
 goto MENU
 

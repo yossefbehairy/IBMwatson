@@ -195,10 +195,52 @@ def print_simulation(result: Dict[str, Any]):
     print("=" * 70 + "\n")
 
 
+def start_interactive_chat():
+    """Real-time conversation loop with IT Navigator."""
+    print("\n" + "=" * 65)
+    print("      IT Navigator Live Chat Console")
+    print("      Speak with the agent naturally. Type 'exit' to return to menu.")
+    print("=" * 65 + "\n")
+
+    prior_attempted = False
+    while True:
+        try:
+            user_input = input("Employee > ").strip()
+            if not user_input:
+                continue
+            if user_input.lower() in ["exit", "quit", "q", "خروج"]:
+                print("\nEnding conversation session. Returning to menu...\n")
+                break
+
+            res = execute_pipeline(user_input, prior_resolve_attempted=prior_attempted)
+            pathway = res["pathway_decision"]["recommended_pathway"].upper()
+            rule = res["pathway_decision"]["reasoning_code"]
+            collab = res["collaborator"] or "it_navigator_primary"
+
+            print(f"\n[AI Agent: {collab} | Pathway: {pathway} | Rule: {rule}]")
+            print(f"IT Navigator > {res['response']}\n")
+
+            if res["pathway_decision"]["recommended_pathway"] == "resolve":
+                prior_attempted = True
+            else:
+                prior_attempted = False
+        except (KeyboardInterrupt, EOFError):
+            print("\nSession ended.\n")
+            break
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="IT Navigator Runner")
-    parser.add_argument("--query", type=str, default="I can't access Salesforce and I have a client meeting in 20 minutes.", help="Employee problem description")
+    parser.add_argument("--query", type=str, default=None, help="Employee problem description")
+    parser.add_argument("--chat", action="store_true", help="Launch interactive live chat session")
     args = parser.parse_args()
 
-    res = execute_pipeline(args.query)
-    print_simulation(res)
+    if args.chat:
+        start_interactive_chat()
+    elif args.query:
+        res = execute_pipeline(args.query)
+        print_simulation(res)
+    else:
+        # Default Section 10 simulation
+        res = execute_pipeline("I can't access Salesforce and I have a client meeting in 20 minutes.")
+        print_simulation(res)
