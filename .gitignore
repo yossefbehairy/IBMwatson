@@ -7,3 +7,7 @@ __pycache__/
 # Local credentials & secrets
 config.json
 .env
+*.log
+*.pem
+*.key
+credentials*
