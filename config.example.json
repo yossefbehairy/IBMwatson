@@ -1,0 +1,4 @@
+{
+  "api_key": "YOUR_IBM_CLOUD_API_KEY_HERE",
+  "instance_url": "https://api.eu-gb.watson-orchestrate.cloud.ibm.com/instances/YOUR_INSTANCE_ID_HERE"
+}
