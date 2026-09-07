@@ -10,6 +10,12 @@ import urllib.parse
 import urllib.error
 from typing import Dict, Any, List, Optional
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # Path to config.json if present in the same directory
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 
@@ -28,7 +34,7 @@ _cfg = load_config()
 
 DEFAULT_API_KEY = os.getenv(
     "WATSON_ORCHESTRATE_API_KEY",
-    _cfg.get("api_key", ""),
+    os.getenv("IBM_CLOUD_API_KEY", _cfg.get("api_key", "")),
 )
 DEFAULT_INSTANCE_URL = os.getenv(
     "WATSON_ORCHESTRATE_URL",
